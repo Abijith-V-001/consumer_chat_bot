@@ -1,9 +1,11 @@
 import json
-from src.utils import tokenize, stem, bag_of_words
+import tokenize
+# from src.utils import tokenize, stem, bag_of_words
 import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
+from src.utils import bag_of_words, stem
 from training.evaluation import evaluate_model
 from src.model import NeuralNet
 
@@ -127,7 +129,7 @@ if __name__ == "__main__":
     learning_rate = 0.001
     num_epochs = 1000
     file_path = 'artifacts/intents.json'
-    model_file = "artifacts/hotel_bot.pth"
+    model_file = "artifacts/luffy.pth"
 
     # Load and preprocess data
     intents = open_dataset(file_path)

@@ -1,9 +1,8 @@
+from flask import Flask, request, jsonify, render_template
 import json
 import random
-import streamlit as st
 import torch
 import nltk
-
 
 from src.model import NeuralNet
 from src.utils import (
@@ -11,15 +10,18 @@ from src.utils import (
     predict, load_chat_history, save_chat_history
 )
 
-# Downloading required NLTK data
-nltk.download('punkt_tab')
+# Initialize Flask app
+app = Flask(__name__, template_folder='templates')
+
+# Download required NLTK data
+nltk.download('punkt')
 
 # Load intents file
 with open(r'artifacts/intents.json', 'r') as f:
     intents = json.load(f)
 
 # Load pre-trained model data
-FILE = r"artifacts/Hotel_model.pth"
+FILE = r"artifacts/luffy.pth"
 data = torch.load(FILE, weights_only=True)
 
 input_size = data["input_size"]
@@ -36,24 +38,26 @@ model.load_state_dict(model_state)
 model.eval()
 
 # Bot name
-bot_name = "HOTBOT"
+bot_name = "LUFFY"
 
-# Streamlit Chatbot Interface
-st.title("Hotel Assistant ChatBot")
-st.markdown("Type a message and press Send to chat. Type 'exit' to quit.")
+# Define the home route
+@app.route("/")
+def home():
+    return render_template("index.html")  # You'll need to create an HTML file for the interface
 
-# Load chat history
-chat_history = load_chat_history()
-
-# Get user input
-user_input = st.text_area("You:", key="user_input", height=100)
-
-if st.button("Send"):
-    # If user types 'exit', clear chat history
+# Define a route for the chatbot response
+@app.route("/get_response", methods=["POST"])
+def get_response():
+    user_input = request.form.get("user_input")
+    
+    # If the user types 'exit', reset chat history
     if user_input.lower() == "exit":
         chat_history = []
         save_chat_history(chat_history)
-        st.stop()
+        return jsonify({"bot_response": "Chat history cleared. Type a message to restart."})
+    
+    # Load chat history
+    chat_history = load_chat_history()
 
     # Append user input to chat history
     chat_history.append(("You", user_input))
@@ -69,12 +73,14 @@ if st.button("Send"):
                 bot_response = random.choice(intent['responses'])
                 chat_history.append((bot_name, bot_response))
     else:
-        chat_history.append((bot_name, "I do not understand..."))
+        bot_response = "I do not understand..."
+        chat_history.append((bot_name, bot_response))
 
     # Save chat history after response
     save_chat_history(chat_history)
 
-# Display chat history in reverse order (newest first)
-st.markdown("## Chat")
-for speaker, message in chat_history[::-1]:
-    st.markdown(f"<span style='font-size:20px;'>**{speaker}**: {message}</span>", unsafe_allow_html=True)
+    return jsonify({"bot_response": bot_response})
+
+# Run the Flask app
+if __name__ == "__main__":
+    app.run(debug=True)

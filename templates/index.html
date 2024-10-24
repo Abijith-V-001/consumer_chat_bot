@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer Assistant Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            animation: slideUp 0.3s ease-in-out;
+        }
+
+        .chat-bubble.sent {
+            background-color: #DCF8C6;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .chat-bubble.received {
+            background-color: #FFFFFF;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+            border: 1px solid #E5E5E5;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        .chat-container {
+            height: 100vh;
+        }
+
+        .chat-window {
+            height: calc(100vh - 6rem); /* Adjust height considering the header and padding */
+            display: flex;
+            flex-direction: column-reverse; /* Start chat from bottom */
+            overflow-y: scroll;
+        }
+
+        .typing-indicator {
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 h-screen">
+    <div class="w-full h-full max-w-none flex shadow-lg bg-white chat-container">
+        <!-- Left section with image -->
+        <div class="w-1/3 bg-gray-200 flex items-center justify-center p-4 rounded-l-lg">
+            <img src="https://img.freepik.com/free-vector/chatbot-conversation-vectorart_78370-4107.jpg" alt="Sample" class="rounded-lg shadow-lg">
+        </div>
+
+        <!-- Right section with chat UI -->
+        <div class="w-2/3 flex flex-col h-full">
+            <!-- Header -->
+            <div class="bg-blue-500 text-white p-4">
+                <h1 class="text-xl font-bold">Consumer Bot</h1>
+            </div>
+
+            <!-- Chat Window -->
+            <div id="chat-window" class="flex-1 p-4 chat-window space-y-4">
+                <div id="chat-history" class="space-y-4"></div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="loader"></div>
+                <p class="text-gray-500">Typing...</p>
+            </div>
+
+            <!-- Chat Form -->
+            <form id="chat-form" class="p-4 border-t border-gray-200 bg-gray-50 flex items-center space-x-2">
+                <textarea name="user_input" id="user_input" rows="1" class="w-full p-2 border rounded-lg focus:outline-none resize-none"
+                    placeholder="Type your message..."></textarea>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user_input');
+        const chatHistory = document.getElementById('chat-history');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Send message on Enter key press
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            sendMessage();
+        });
+
+        async function sendMessage() {
+            const userText = userInput.value;
+            if (!userText.trim()) return;
+
+            // Add user message (sent)
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-bubble sent animate-slide-up';
+            userMessage.innerHTML = `<strong>You:</strong> ${userText}`;
+            chatHistory.appendChild(userMessage);
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to bottom
+
+            // Clear input
+            userInput.value = '';
+
+            // Show typing indicator
+            typingIndicator.style.display = 'flex';
+
+            // Simulate bot response delay
+            setTimeout(async () => {
+                const response = await fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `user_input=${userText}`
+                });
+                const data = await response.json();
+
+                // Add bot response (received)
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat-bubble received animate-slide-up';
+                botMessage.innerHTML = `<strong>LUFFY:</strong> ${data.bot_response}`;
+                chatHistory.appendChild(botMessage);
+
+                // Hide typing indicator
+                typingIndicator.style.display = 'none';
+
+                // Scroll to bottom after bot response
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }, 2000); // Simulate a 2-second delay for bot response
+        }
+    </script>
+</body>
+
+</html>
