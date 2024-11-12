@@ -44,11 +44,6 @@ This will start the chatbot on a local server (usually at `http://127.0.0.1:5000
 
 The Consumer Chatbot can answer various e-commerce-related queries such as order status, returns, refunds, product replacements, and general support inquiries. Users can interact with the chatbot by typing messages into the chat interface, and the bot will respond based on its training and intent mapping.
 
-### Key Features:
-- The chatbot stores chat history to provide a more personalized experience.
-- If the model is unsure of a response, it will use a fallback response.
-- Users can reset the chat history by typing "exit".
-
 ## Contributors
 
 - ABIJITH V
