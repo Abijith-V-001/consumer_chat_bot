@@ -1,6 +1,6 @@
-# Hotel Chatbot
+# Consumer Chatbot
 
-Welcome to the Hotel Chatbot repository! This chatbot is designed to assist users with hotel-related inquiries and tasks. Below are instructions on how to set up and run the chatbot.
+Welcome to the Consumer Chatbot repository! This chatbot is designed to assist users with e-commerce-related tasks such as returns, refunds, replacements, and general customer support queries. Below are instructions on how to set up and run the chatbot.
 
 ## Installation
 
@@ -10,44 +10,51 @@ To install the required dependencies, run the following command:
 pip install -r requirements.txt
 ```
 
+Make sure you have all the necessary Python packages, including Flask, NLTK, and PyTorch.
+
 ## Running the Chatbot
 
-Once the dependencies are installed, you can run the chatbot using Streamlit. Execute the following command:
+Once the dependencies are installed, you can run the Flask app by executing the following command:
 
 ```bash
-streamlit run app.py
+python app.py
 ```
 
-This will start the chatbot interface, allowing users to interact with it.
+This will start the chatbot on a local server (usually at `http://127.0.0.1:5000/`), where users can interact with the chatbot via a web interface.
 
 ## Project Structure
 
-- **app.py**: This file contains the Streamlit application code for running the chatbot interface.
+- **app.py**: The main Flask application that runs the chatbot and handles user input and model predictions.
+  
+- **templates/index.html**: The HTML template for rendering the chatbot's interface where users can type their queries.
 
-- **src/model.py**: The `model.py` file contains the implementation of the neural network model used for the chatbot.
+- **src/model.py**: Contains the implementation of the neural network model used for processing and predicting user queries.
 
-- **src/utils.py**: The `utils.py` file provides utilities such as tokenizer, stemmer, and bag of words used for preprocessing text data.
+- **src/utils.py**: Provides utilities for preprocessing user input, predicting responses, and managing chat history.
 
-- **training/train.py**: The `train.py` file is responsible for training the chatbot model.
+- **training/train.py**: The file responsible for training the chatbot's machine learning model.
 
-- **training/evaluation.py**: The `evaluation.py` file contains code for evaluating the performance of the trained model.
+- **artifacts/intents.json**: A JSON file containing all the intents the model has been trained on, including returns, refunds, replacements, and general queries.
 
-- **artifacts/intents.json**: This JSON file contains all the intents that the model has been trained on. Intents represent different types of user queries or interactions.
+- **artifacts/luffy.pth**: The file that stores the trained model's weights and configuration.
 
-- **artifacts/Hotel_model.pth**: The `Hotel_model.pth` file stores the details of the trained chatbot model.
-
-- **artifacts/chat_history.json**: The `chat_history.json` file is used to save the chat history, including past user queries and bot responses.
+- **artifacts/chat_history.json**: A JSON file used for storing the chat history, including past user queries and bot responses.
 
 ## Usage
 
-The Hotel Chatbot is capable of answering various hotel-related queries such as room availability, amenities, local attractions, and more. Users can interact with the chatbot by typing their questions or messages into the chat interface.
+The Consumer Chatbot can answer various e-commerce-related queries such as order status, returns, refunds, product replacements, and general support inquiries. Users can interact with the chatbot by typing messages into the chat interface, and the bot will respond based on its training and intent mapping.
+
+### Key Features:
+- The chatbot stores chat history to provide a more personalized experience.
+- If the model is unsure of a response, it will use a fallback response.
+- Users can reset the chat history by typing "exit".
 
 ## Contributors
 
-- AJIN T
+- ABIJITH V
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE). Feel free to modify and use it according to your needs.
 
-If you have any questions or issues, please feel free to contact me through ajinravi04@gamil.com . Thank you for using the Hotel Chatbot!
+If you have any questions or issues, please feel free to contact me at abivandiyil001@gmail.com. Thank you for using the Consumer Chatbot!
